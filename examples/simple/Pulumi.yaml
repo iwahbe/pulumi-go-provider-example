@@ -1,0 +1,22 @@
+name: file-example
+runtime: yaml
+description: A simple example of using the file provider
+
+plugins:
+  providers:
+    - name: file
+      path: ../../bin
+
+resources:
+  myFile:
+    type: file:File
+    properties:
+      path: ./test-output.txt
+      content: |
+        Hello from Pulumi!
+        This file was created by the file provider.
+      force: true
+
+outputs:
+  filePath: ${myFile.path}
+  fileContent: ${myFile.content}
