@@ -16,6 +16,7 @@ func main() {
 			infer.Resource(File{}),
 		).
 		WithNamespace("example").
+		WithDisplayName("File").
 		Build()
 
 	if err != nil {
@@ -145,29 +146,6 @@ func (File) Update(ctx context.Context, req infer.UpdateRequest[FileArgs, FileSt
 			Force:   req.Inputs.Force,
 			Content: req.Inputs.Content,
 		},
-	}, nil
-}
-
-func (File) Diff(ctx context.Context, req infer.DiffRequest[FileArgs, FileState]) (infer.DiffResponse, error) {
-	diff := map[string]p.PropertyDiff{}
-	if req.Inputs.Content != req.State.Content {
-		diff["content"] = p.PropertyDiff{Kind: p.Update}
-	}
-	if req.Inputs.Force != req.State.Force {
-		diff["force"] = p.PropertyDiff{Kind: p.Update}
-	}
-	if req.Inputs.Path != req.State.Path {
-		diff["path"] = p.PropertyDiff{Kind: p.UpdateReplace}
-	} else {
-		_, err := os.Stat(req.Inputs.Path)
-		if os.IsNotExist(err) {
-			diff["path"] = p.PropertyDiff{Kind: p.Add}
-		}
-	}
-	return infer.DiffResponse{
-		DeleteBeforeReplace: true,
-		HasChanges:          len(diff) > 0,
-		DetailedDiff:        diff,
 	}, nil
 }
 
